@@ -7,14 +7,14 @@ topic:
 
 sources:
   feeds:
-    - name: Reuters World
+    - name: Al Jazeera World
       group: agencies
-      url: https://www.reutersagency.com/feed/?best-topics=world&post_type=best
+      url: https://www.aljazeera.com/xml/rss/all.xml
       tags: [world, agencies]
       max_items: 20
-    - name: AP Top News
+    - name: NPR World
       group: agencies
-      url: https://apnews.com/hub/ap-top-news?output=rss
+      url: https://feeds.npr.org/1004/rss.xml
       tags: [world, agencies]
       max_items: 20
     - name: BBC World
@@ -47,11 +47,6 @@ sources:
       url: https://www.crisisgroup.org/rss.xml
       tags: [conflict, analysis]
       max_items: 10
-    - name: Carnegie Politika
-      group: ru
-      url: https://carnegieendowment.org/rss/regions/1543?lang=ru
-      tags: [ru, analysis, russia]
-      max_items: 10
     - name: Meduza News
       group: ru
       url: https://meduza.io/rss/all
@@ -63,6 +58,10 @@ sources:
       group: europe
       query: Russia Ukraine war latest sanctions NATO negotiations
       tags: [russia, ukraine, europe, war]
+    - name: Carnegie Politika Russia Eurasia
+      group: ru
+      query: site:carnegieendowment.org/russia-eurasia/politika Russia Eurasia Carnegie Politika latest
+      tags: [ru, analysis, russia]
     - name: NATO Europe security
       group: europe
       query: NATO Europe security defense spending eastern flank latest

@@ -7,19 +7,27 @@ from datetime import date
 from pathlib import Path
 
 from .candidates import Candidate, CandidateStore
-from .collector import collect_all_feeds
+from .collector import collect_with_diagnostics
 from .config import DigestConfig
 from .hermes import collector_prompt, digest_prompt
 from .render import render_markdown_digest
+from .validate import validate_config
 
 
 def _cmd_collect(args: argparse.Namespace) -> int:
     cfg = DigestConfig.from_file(args.config)
     store = CandidateStore(args.candidates)
-    found = collect_all_feeds(cfg)
-    added = store.append_many(found)
-    print(json.dumps({"found": len(found), "added": added, "candidates": str(args.candidates)}, ensure_ascii=False))
-    return 0
+    result = collect_with_diagnostics(cfg)
+    added = store.append_many(result.candidates)
+    payload = {
+        "found": len(result.candidates),
+        "added": added,
+        "failed_feeds": result.failed_feeds,
+        "errors": [e.__dict__ for e in result.errors],
+        "candidates": str(args.candidates),
+    }
+    print(json.dumps(payload, ensure_ascii=False))
+    return 2 if result.failed_feeds and not result.candidates else 0
 
 
 def _cmd_render(args: argparse.Namespace) -> int:
@@ -40,6 +48,19 @@ def _cmd_add(args: argparse.Namespace) -> int:
     added = CandidateStore(args.candidates).append_many([candidate])
     print(json.dumps({"added": added}, ensure_ascii=False))
     return 0
+
+
+def _cmd_validate(args: argparse.Namespace) -> int:
+    result = validate_config(args.config)
+    print(json.dumps({"ok": result.ok, "errors": result.errors, "warnings": result.warnings}, ensure_ascii=False))
+    return 0 if result.ok else 2
+
+
+def _cmd_health(args: argparse.Namespace) -> int:
+    cfg = DigestConfig.from_file(args.config)
+    result = collect_with_diagnostics(cfg)
+    print(json.dumps({"ok": result.ok, "candidates": len(result.candidates), "failed_feeds": result.failed_feeds, "errors": [e.__dict__ for e in result.errors]}, ensure_ascii=False))
+    return 0 if result.ok else 2
 
 
 def _cmd_hermes_prompts(args: argparse.Namespace) -> int:
@@ -68,6 +89,12 @@ def build_parser() -> argparse.ArgumentParser:
     add = sub.add_parser("add", help="Append one JSON candidate to the store")
     add.add_argument("json", help="Candidate JSON object")
     add.set_defaults(func=_cmd_add)
+
+    validate = sub.add_parser("validate", help="Validate topic config")
+    validate.set_defaults(func=_cmd_validate)
+
+    health = sub.add_parser("health", help="Fetch configured feeds and report source health")
+    health.set_defaults(func=_cmd_health)
 
     prompts = sub.add_parser("hermes-prompts", help="Generate Hermes cron prompts from topic config")
     prompts.set_defaults(func=_cmd_hermes_prompts)

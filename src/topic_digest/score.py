@@ -29,8 +29,6 @@ def score_candidate(candidate: Candidate, config: DigestConfig) -> int:
     score = max(1, min(5, int(candidate.importance or 1)))
     score += int(config.ranking.source_weights.get(candidate.source_group, 0))
     score += matched_include
-    if candidate.source_group in {"official", "china"}:
-        score += 1
     return max(0, min(10, score))
 
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from urllib.request import Request, urlopen
 
@@ -7,12 +8,46 @@ from .candidates import Candidate
 from .config import DigestConfig, FeedSource
 from .rss import parse_rss_items
 from .score import score_candidate
+from .validate import validate_url
+
+MAX_RESPONSE_BYTES = 2_000_000
 
 
-def fetch_url(url: str, timeout: int = 20) -> str:
+@dataclass
+class SourceError:
+    source: str
+    url: str
+    error: str
+
+
+@dataclass
+class CollectResult:
+    candidates: list[Candidate] = field(default_factory=list)
+    errors: list[SourceError] = field(default_factory=list)
+
+    @property
+    def failed_feeds(self) -> int:
+        return len(self.errors)
+
+    @property
+    def ok(self) -> bool:
+        return bool(self.candidates) or not self.errors
+
+
+def fetch_url(url: str, timeout: int = 20, max_bytes: int = MAX_RESPONSE_BYTES) -> str:
+    problems = validate_url(url)
+    if problems:
+        raise ValueError("; ".join(problems))
     req = Request(url, headers={"User-Agent": "universal-news-digest/0.1"})
-    with urlopen(req, timeout=timeout) as response:  # nosec: user-configured URLs are expected
-        return response.read().decode(response.headers.get_content_charset() or "utf-8", errors="replace")
+    with urlopen(req, timeout=timeout) as response:  # nosec: validated user-configured http(s) URL
+        content_type = response.headers.get_content_type()
+        if content_type not in {"application/rss+xml", "application/atom+xml", "application/xml", "text/xml"}:
+            # Some feeds are served as text/html; let parse stage decide, but surface the type in health.
+            pass
+        data = response.read(max_bytes + 1)
+        if len(data) > max_bytes:
+            raise ValueError(f"response exceeds {max_bytes} bytes")
+        return data.decode(response.headers.get_content_charset() or "utf-8", errors="replace")
 
 
 def _is_recent(published: str, lookback_hours: int) -> bool:
@@ -23,7 +58,6 @@ def _is_recent(published: str, lookback_hours: int) -> bool:
     except ValueError:
         return True
     cutoff = datetime.now(timezone.utc) - timedelta(hours=lookback_hours)
-    # Date-only RSS values have no time component; allow the whole day.
     return published_date.date() >= cutoff.date()
 
 
@@ -52,21 +86,15 @@ def collect_feed(feed: FeedSource, config: DigestConfig) -> list[Candidate]:
     return candidates
 
 
-def collect_all_feeds(config: DigestConfig) -> list[Candidate]:
-    out: list[Candidate] = []
+def collect_with_diagnostics(config: DigestConfig) -> CollectResult:
+    result = CollectResult()
     for feed in config.feeds:
         try:
-            out.extend(collect_feed(feed, config))
+            result.candidates.extend(collect_feed(feed, config))
         except Exception as exc:
-            out.append(
-                Candidate(
-                    source=feed.name,
-                    source_group="collector_error",
-                    title=f"Collector error for {feed.name}",
-                    url=feed.url,
-                    summary_ru=str(exc),
-                    tags=["error"],
-                    importance=1,
-                )
-            )
-    return [c for c in out if c.source_group != "collector_error"]
+            result.errors.append(SourceError(source=feed.name, url=feed.url, error=f"{type(exc).__name__}: {exc}"))
+    return result
+
+
+def collect_all_feeds(config: DigestConfig) -> list[Candidate]:
+    return collect_with_diagnostics(config).candidates

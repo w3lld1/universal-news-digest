@@ -33,6 +33,10 @@ topic-digest --config examples/ai.yaml --candidates state/ai-candidates.jsonl re
 
 # Generate Hermes cron prompts from the same topic config
 topic-digest --config examples/ai.yaml --candidates /home/hermes/.hermes/ai-news-digest/candidates.jsonl hermes-prompts
+
+# Validate a topic config and check live feed health
+topic-digest --config examples/geopolitics.yaml validate
+topic-digest --config examples/geopolitics.yaml health
 ```
 
 ## Add a new digest topic
@@ -114,9 +118,9 @@ topic-digest --config examples/ai.yaml --candidates /home/hermes/.hermes/ai-news
 
 `examples/geopolitics.yaml` includes:
 
-- agencies: Reuters, AP, BBC, The Guardian;
+- agencies/media feeds: Al Jazeera, NPR, BBC, The Guardian;
 - analysis/think tanks: War on the Rocks, Foreign Affairs, CSIS, Crisis Group;
-- Russian-language context: Carnegie Politika, Meduza;
+- Russian-language context: Meduza plus Carnegie Politika search query;
 - query groups for Russia/Ukraine, NATO/Europe, China/Taiwan, Middle East, sanctions/energy/economy, Global South/BRICS, Africa, Arctic and international institutions.
 
 ## Tests

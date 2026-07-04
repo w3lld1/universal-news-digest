@@ -13,7 +13,7 @@ sources:
       tags: [model, product, api]
     - name: Google DeepMind Blog
       group: official
-      url: https://deepmind.google/discover/blog/rss.xml
+      url: https://deepmind.google/blog/rss.xml
       tags: [model, research]
     - name: Hugging Face Blog
       group: official

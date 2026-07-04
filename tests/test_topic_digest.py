@@ -6,10 +6,12 @@ import unittest
 from pathlib import Path
 
 from topic_digest.candidates import Candidate, CandidateStore, canonical_url
+from topic_digest.collector import collect_with_diagnostics
 from topic_digest.config import DigestConfig
 from topic_digest.render import render_markdown_digest
 from topic_digest.rss import parse_rss_items
 from topic_digest.score import score_candidate
+from topic_digest.validate import validate_config
 
 
 class TopicDigestTests(unittest.TestCase):
@@ -126,13 +128,73 @@ ranking: {include_keywords: [], exclude_keywords: []}
             cfg = DigestConfig.from_file(path)
         md = render_markdown_digest(
             cfg,
-            [Candidate(source="OpenAI", source_group="official", title="Model X", url="https://x.test", summary_ru="Релиз", why_it_matters_ru="Важно", tags=["model"], importance=5)],
+            [Candidate(source="OpenAI", source_group="official", title="Model [X](bad)", url="https://x.test", summary_ru="Релиз", why_it_matters_ru="Важно", tags=["model"], importance=5)],
             date="2026-07-04",
         )
         self.assertIn("## AI — 2026-07-04", md)
         self.assertIn("### Модели / продукты", md)
-        self.assertIn("Model X", md)
+        self.assertIn("Model \\[X\\](bad)", md)
         self.assertIn("крупных обновлений не найдено", md)
+
+    def test_scoring_is_config_only_not_domain_hardcoded(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "topic.yaml"
+            path.write_text("""
+topic: {id: test, title: Test, language: ru, lookback_hours: 24}
+sources: {feeds: [], queries: []}
+ranking: {include_keywords: [release], exclude_keywords: [], source_weights: {official: 0, china: 0, news: 0}}
+sections: []
+""".strip(), encoding="utf-8")
+            cfg = DigestConfig.from_file(path)
+        official = Candidate(source="Official", source_group="official", title="release", url="https://o.test")
+        china = Candidate(source="China", source_group="china", title="release", url="https://c.test")
+        news = Candidate(source="News", source_group="news", title="release", url="https://n.test")
+        self.assertEqual(score_candidate(official, cfg), score_candidate(news, cfg))
+        self.assertEqual(score_candidate(china, cfg), score_candidate(news, cfg))
+
+    def test_validate_config_reports_bad_feed_url_and_missing_fields(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "bad.yaml"
+            path.write_text("""
+topic: {id: bad, title: Bad, language: ru, lookback_hours: 24}
+sources:
+  feeds:
+    - name: Localhost
+      group: news
+      url: http://127.0.0.1/feed.xml
+  queries:
+    - name: Empty query
+      group: news
+      query: ""
+ranking: {include_keywords: [], exclude_keywords: []}
+sections:
+  - {id: main, title: Главное, groups: [unknown_group]}
+""".strip(), encoding="utf-8")
+            result = validate_config(path)
+        self.assertFalse(result.ok)
+        joined = "\n".join(result.errors + result.warnings)
+        self.assertIn("private or localhost", joined)
+        self.assertIn("empty query", joined)
+        self.assertIn("unknown_group", joined)
+
+    def test_collector_returns_structured_diagnostics_for_failed_feeds(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "topic.yaml"
+            path.write_text("""
+topic: {id: test, title: Test, language: ru, lookback_hours: 24}
+sources:
+  feeds:
+    - name: Bad scheme
+      group: news
+      url: file:///etc/passwd
+ranking: {include_keywords: [], exclude_keywords: []}
+sections: []
+""".strip(), encoding="utf-8")
+            cfg = DigestConfig.from_file(path)
+        result = collect_with_diagnostics(cfg)
+        self.assertEqual(result.candidates, [])
+        self.assertEqual(result.failed_feeds, 1)
+        self.assertIn("Bad scheme", result.errors[0].source)
 
 
 if __name__ == "__main__":
