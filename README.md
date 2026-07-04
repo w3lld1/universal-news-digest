@@ -123,6 +123,13 @@ topic-digest --config examples/ai.yaml --candidates /home/hermes/.hermes/ai-news
 - Russian-language context: Meduza plus Carnegie Politika search query;
 - query groups for Russia/Ukraine, NATO/Europe, China/Taiwan, Middle East, sanctions/energy/economy, Global South/BRICS, Africa, Arctic and international institutions.
 
+`examples/science-discoveries.yaml` includes:
+
+- science news feeds: ScienceDaily and Phys.org;
+- primary/deep-science sources: Nature, Science Magazine and Quanta;
+- space coverage from NASA;
+- query groups for breakthrough discoveries, physics/materials, space/astronomy, biology/medicine, climate/Earth science and Russian-language science context.
+
 ## Tests
 
 ```bash

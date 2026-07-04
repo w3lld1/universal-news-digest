@@ -1,0 +1,185 @@
+topic:
+  id: science-discoveries
+  title: Дайджест научных открытий
+  language: ru
+  lookback_hours: 72
+  max_items: 12
+
+sources:
+  feeds:
+    - name: ScienceDaily Top Science
+      group: science_news
+      url: https://www.sciencedaily.com/rss/top/science.xml
+      tags: [science, discovery]
+      max_items: 20
+    - name: ScienceDaily Matter & Energy
+      group: physics
+      url: https://www.sciencedaily.com/rss/matter_energy.xml
+      tags: [physics, materials, energy]
+      max_items: 15
+    - name: ScienceDaily Health & Medicine
+      group: life_sciences
+      url: https://www.sciencedaily.com/rss/health_medicine.xml
+      tags: [medicine, neuroscience, health]
+      max_items: 12
+    - name: ScienceDaily Plants & Animals
+      group: life_sciences
+      url: https://www.sciencedaily.com/rss/plants_animals.xml
+      tags: [biology, genetics, ecology]
+      max_items: 12
+    - name: ScienceDaily Earth & Climate
+      group: earth
+      url: https://www.sciencedaily.com/rss/earth_climate.xml
+      tags: [earth, climate, ocean, geology]
+      max_items: 12
+    - name: ScienceDaily Space & Time
+      group: space
+      url: https://www.sciencedaily.com/rss/space_time.xml
+      tags: [space, astronomy, cosmology]
+      max_items: 12
+    - name: Phys.org Latest Science
+      group: science_news
+      url: https://phys.org/rss-feed/
+      tags: [science, research]
+      max_items: 20
+    - name: Quanta Magazine
+      group: deep_science
+      url: https://api.quantamagazine.org/feed/
+      tags: [math, physics, biology, deep-science]
+      max_items: 12
+    - name: Nature
+      group: journals
+      url: https://www.nature.com/nature.rss
+      tags: [journal, research]
+      max_items: 12
+    - name: Science Magazine
+      group: journals
+      url: https://www.science.org/action/showFeed?type=etoc&feed=rss&jc=science
+      tags: [journal, research]
+      max_items: 12
+    - name: NASA Breaking News
+      group: space
+      url: https://www.nasa.gov/rss/dyn/breaking_news.rss
+      tags: [space, astronomy]
+      max_items: 12
+
+  queries:
+    - name: Breakthrough discoveries
+      group: science_news
+      query: scientific breakthrough discovery study researchers latest
+      tags: [breakthrough, discovery]
+    - name: Nature discoveries
+      group: journals
+      query: site:nature.com discovery breakthrough researchers study latest
+      tags: [journal, research]
+    - name: Science journal discoveries
+      group: journals
+      query: site:science.org discovery breakthrough researchers study latest
+      tags: [journal, research]
+    - name: Physics and materials
+      group: physics
+      query: physics materials quantum breakthrough experiment discovery latest
+      tags: [physics, materials, quantum]
+    - name: Space and astronomy
+      group: space
+      query: astronomy space telescope exoplanet cosmology discovery latest
+      tags: [space, astronomy]
+    - name: Biology and medicine research
+      group: life_sciences
+      query: biology genetics neuroscience medicine research discovery latest
+      tags: [biology, genetics, neuroscience, medicine]
+    - name: Climate and Earth science
+      group: earth
+      query: climate earth science geology ocean research discovery latest
+      tags: [climate, earth, ocean]
+    - name: Russian science context
+      group: ru
+      query: научное открытие исследование ученые новый метод последние новости
+      tags: [ru, science]
+
+ranking:
+  include_keywords:
+    - discovery
+    - breakthrough
+    - researchers
+    - scientists
+    - study
+    - research
+    - published
+    - experiment
+    - evidence
+    - observed
+    - detected
+    - reveals
+    - finds
+    - new method
+    - quantum
+    - physics
+    - materials
+    - energy
+    - astronomy
+    - space
+    - telescope
+    - exoplanet
+    - cosmology
+    - biology
+    - genetics
+    - genome
+    - neuroscience
+    - medicine
+    - climate
+    - ocean
+    - geology
+    - mathematics
+    - AI for science
+  exclude_keywords:
+    - celebrity
+    - politics
+    - election
+    - sports
+    - lifestyle
+    - horoscope
+    - coupon
+    - sponsored
+    - advertorial
+    - press release service
+    - stock market
+    - earnings
+  source_weights:
+    journals: 3
+    deep_science: 2
+    science_news: 2
+    physics: 2
+    space: 2
+    life_sciences: 1
+    earth: 1
+    ru: 1
+
+sections:
+  - id: main
+    title: Главное
+    tags: [breakthrough, discovery, research]
+  - id: physics
+    title: Физика / материалы / энергия
+    groups: [physics]
+    tags: [physics, materials, energy, quantum]
+  - id: space
+    title: Космос / астрономия
+    groups: [space]
+    tags: [space, astronomy, telescope, exoplanet, cosmology]
+  - id: life_sciences
+    title: Биология / медицина / нейронауки
+    groups: [life_sciences]
+    tags: [biology, genetics, neuroscience, medicine]
+  - id: earth
+    title: Земля / климат / океан
+    groups: [earth]
+    tags: [climate, earth, ocean, geology]
+  - id: journals
+    title: Журналы и первоисточники
+    groups: [journals, deep_science]
+    tags: [journal, deep-science]
+  - id: ru
+    title: Русскоязычный контекст
+    groups: [ru]
+    tags: [ru, science]

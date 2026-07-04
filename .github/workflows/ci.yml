@@ -22,7 +22,9 @@ jobs:
         run: |
           topic-digest --config examples/ai.yaml validate
           topic-digest --config examples/geopolitics.yaml validate
+          topic-digest --config examples/science-discoveries.yaml validate
       - name: Smoke test CLI prompts
         run: |
           topic-digest --config examples/ai.yaml --candidates /tmp/ai.jsonl hermes-prompts >/tmp/ai-prompts.md
           topic-digest --config examples/geopolitics.yaml --candidates /tmp/geo.jsonl hermes-prompts >/tmp/geo-prompts.md
+          topic-digest --config examples/science-discoveries.yaml --candidates /tmp/science.jsonl hermes-prompts >/tmp/science-prompts.md

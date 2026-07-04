@@ -152,6 +152,18 @@ sections: []
         self.assertEqual(score_candidate(official, cfg), score_candidate(news, cfg))
         self.assertEqual(score_candidate(china, cfg), score_candidate(news, cfg))
 
+    def test_science_discoveries_example_loads_and_validates(self) -> None:
+        path = Path(__file__).resolve().parents[1] / "examples" / "science-discoveries.yaml"
+        cfg = DigestConfig.from_file(path)
+        result = validate_config(path)
+        self.assertTrue(result.ok, "\n".join(result.errors + result.warnings))
+        self.assertEqual(cfg.topic_id, "science-discoveries")
+        self.assertEqual(cfg.title, "Дайджест научных открытий")
+        self.assertGreaterEqual(len(cfg.feeds), 5)
+        self.assertGreaterEqual(len(cfg.queries), 5)
+        self.assertIn("breakthrough", cfg.ranking.include_keywords)
+        self.assertTrue(any(section.id == "space" for section in cfg.sections))
+
     def test_validate_config_reports_bad_feed_url_and_missing_fields(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "bad.yaml"
