@@ -112,6 +112,13 @@ topic-digest --config examples/ai.yaml --candidates /home/hermes/.hermes/ai-news
 - engineering blogs and open-source tooling;
 - Russian-language sources such as Habr AI.
 
+`examples/geopolitics.yaml` includes:
+
+- agencies: Reuters, AP, BBC, The Guardian;
+- analysis/think tanks: War on the Rocks, Foreign Affairs, CSIS, Crisis Group;
+- Russian-language context: Carnegie Politika, Meduza;
+- query groups for Russia/Ukraine, NATO/Europe, China/Taiwan, Middle East, sanctions/energy/economy, Global South/BRICS, Africa, Arctic and international institutions.
+
 ## Tests
 
 ```bash

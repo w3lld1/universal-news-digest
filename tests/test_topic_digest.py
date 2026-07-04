@@ -93,7 +93,7 @@ sections:
                 """
 topic: {id: test, title: Test, language: ru, lookback_hours: 24}
 ranking:
-  include_keywords: [model, qwen, agents]
+  include_keywords: [model, qwen, agents, UN]
   exclude_keywords: [coupon]
   source_weights: {official: 2, china: 2}
 sections: []
@@ -106,6 +106,8 @@ sources: {feeds: [], queries: []}
         bad = Candidate(source="Ad", source_group="news", title="AI coupon deal", url="https://ad.test")
         self.assertGreater(score_candidate(good, cfg), score_candidate(bad, cfg))
         self.assertEqual(score_candidate(bad, cfg), 0)
+        substring_false_positive = Candidate(source="BBC", source_group="news", title="Wedding day unfolded", url="https://x.test/wedding")
+        self.assertEqual(score_candidate(substring_false_positive, cfg), 0)
 
     def test_renderer_groups_candidates_by_sections_and_mentions_china_empty_state(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

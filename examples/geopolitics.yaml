@@ -1,0 +1,202 @@
+topic:
+  id: geopolitics
+  title: Геополитический дайджест
+  language: ru
+  lookback_hours: 24
+  max_items: 12
+
+sources:
+  feeds:
+    - name: Reuters World
+      group: agencies
+      url: https://www.reutersagency.com/feed/?best-topics=world&post_type=best
+      tags: [world, agencies]
+      max_items: 20
+    - name: AP Top News
+      group: agencies
+      url: https://apnews.com/hub/ap-top-news?output=rss
+      tags: [world, agencies]
+      max_items: 20
+    - name: BBC World
+      group: agencies
+      url: http://feeds.bbci.co.uk/news/world/rss.xml
+      tags: [world]
+      max_items: 20
+    - name: The Guardian World
+      group: agencies
+      url: https://www.theguardian.com/world/rss
+      tags: [world]
+      max_items: 20
+    - name: War on the Rocks
+      group: analysis
+      url: https://warontherocks.com/feed/
+      tags: [defense, analysis]
+      max_items: 10
+    - name: Foreign Affairs
+      group: analysis
+      url: https://www.foreignaffairs.com/rss.xml
+      tags: [analysis, strategy]
+      max_items: 10
+    - name: CSIS Analysis
+      group: thinktanks
+      url: https://www.csis.org/rss.xml
+      tags: [thinktank, defense, economy]
+      max_items: 10
+    - name: Crisis Group
+      group: thinktanks
+      url: https://www.crisisgroup.org/rss.xml
+      tags: [conflict, analysis]
+      max_items: 10
+    - name: Carnegie Politika
+      group: ru
+      url: https://carnegieendowment.org/rss/regions/1543?lang=ru
+      tags: [ru, analysis, russia]
+      max_items: 10
+    - name: Meduza News
+      group: ru
+      url: https://meduza.io/rss/all
+      tags: [ru, russia, ukraine]
+      max_items: 15
+
+  queries:
+    - name: Russia Ukraine war
+      group: europe
+      query: Russia Ukraine war latest sanctions NATO negotiations
+      tags: [russia, ukraine, europe, war]
+    - name: NATO Europe security
+      group: europe
+      query: NATO Europe security defense spending eastern flank latest
+      tags: [nato, europe, defense]
+    - name: China Taiwan South China Sea
+      group: asia
+      query: China Taiwan South China Sea military diplomacy latest
+      tags: [china, taiwan, asia, military]
+    - name: US China technology sanctions
+      group: economy
+      query: US China technology export controls sanctions chips rare earths latest
+      tags: [china, us, economy, sanctions, technology]
+    - name: Middle East Israel Iran Gaza
+      group: middle_east
+      query: Middle East Israel Iran Gaza Lebanon Houthis latest
+      tags: [middle-east, israel, iran, gaza, conflict]
+    - name: Energy geopolitics
+      group: economy
+      query: energy geopolitics oil gas LNG sanctions OPEC latest
+      tags: [energy, economy, sanctions]
+    - name: Global South BRICS SCO
+      group: global_south
+      query: BRICS SCO Global South diplomacy sanctions trade latest
+      tags: [brics, global-south, diplomacy]
+    - name: US foreign policy
+      group: americas
+      query: US foreign policy State Department sanctions defense diplomacy latest
+      tags: [us, diplomacy, sanctions]
+    - name: Arctic geopolitics
+      group: arctic
+      query: Arctic security Russia NATO China geopolitics latest
+      tags: [arctic, russia, nato, china]
+    - name: Africa coups conflicts
+      group: africa
+      query: Africa coups conflict Sahel Sudan Ethiopia geopolitics latest
+      tags: [africa, conflict, sahel, sudan]
+    - name: Latin America geopolitics
+      group: americas
+      query: Latin America geopolitics Venezuela Brazil Mexico elections security latest
+      tags: [latin-america, americas]
+    - name: International institutions
+      group: institutions
+      query: UN G7 G20 EU sanctions peace talks geopolitics latest
+      tags: [un, eu, g7, g20, diplomacy]
+
+ranking:
+  include_keywords:
+    - sanctions
+    - ceasefire
+    - escalation
+    - de-escalation
+    - NATO
+    - EU
+    - UN
+    - China
+    - Taiwan
+    - Russia
+    - Ukraine
+    - Iran
+    - Israel
+    - Gaza
+    - energy
+    - oil
+    - gas
+    - chips
+    - export controls
+    - military
+    - defense
+    - security
+    - conflict
+    - war
+    - troops
+    - foreign policy
+    - Europe
+    - Sudan
+    - Hong Kong
+    - Peru
+    - pipeline
+    - migrants
+    - funeral
+    - election
+    - coup
+    - treaty
+    - summit
+    - BRICS
+  exclude_keywords:
+    - celebrity
+    - sports
+    - lifestyle
+    - travel
+    - weather
+    - horoscope
+    - coupon
+    - sponsored
+    - opinion-only
+  source_weights:
+    agencies: 2
+    official: 2
+    thinktanks: 1
+    analysis: 1
+    europe: 1
+    asia: 1
+    middle_east: 1
+    economy: 1
+
+sections:
+  - id: main
+    title: Главное
+    tags: [war, sanctions, escalation, diplomacy, summit, treaty]
+  - id: europe
+    title: Европа / Россия / Украина
+    groups: [europe]
+    tags: [russia, ukraine, europe, nato]
+  - id: asia
+    title: Китай / Тайвань / Азия
+    groups: [asia]
+    tags: [china, taiwan, asia]
+  - id: middle_east
+    title: Ближний Восток
+    groups: [middle_east]
+    tags: [middle-east, israel, iran, gaza]
+  - id: economy
+    title: Санкции / энергия / экономика
+    groups: [economy]
+    tags: [sanctions, energy, economy, technology]
+  - id: global_south
+    title: Глобальный Юг / BRICS / институты
+    groups: [global_south, institutions]
+    tags: [brics, global-south, un, g7, g20]
+  - id: analysis
+    title: Аналитика и что прочитать полностью
+    groups: [analysis, thinktanks]
+    tags: [analysis, thinktank, strategy]
+  - id: ru
+    title: Русскоязычный контекст
+    groups: [ru]
+    tags: [ru, russia]
