@@ -29,7 +29,7 @@ def _item(candidate: Candidate, idx: int) -> str:
         f"{idx}. **{title}**\n"
         f"   - Коротко: {summary}\n"
         f"   - Почему важно: {why}\n"
-        f"   - Источник: [{source}]({url})\n"
+        f"   - Ссылка: [{title} — {source}]({url})\n"
     )
 
 

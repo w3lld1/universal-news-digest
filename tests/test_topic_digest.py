@@ -134,6 +134,8 @@ ranking: {include_keywords: [], exclude_keywords: []}
         self.assertIn("## AI — 2026-07-04", md)
         self.assertIn("### Модели / продукты", md)
         self.assertIn("Model \\[X\\](bad)", md)
+        self.assertIn("Ссылка: [Model \\[X\\](bad) — OpenAI](https://x.test)", md)
+        self.assertNotIn("Источник: [OpenAI](https://x.test)", md)
         self.assertIn("крупных обновлений не найдено", md)
 
     def test_scoring_is_config_only_not_domain_hardcoded(self) -> None:
