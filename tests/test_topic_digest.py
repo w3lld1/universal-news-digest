@@ -8,6 +8,7 @@ from pathlib import Path
 from topic_digest.candidates import Candidate, CandidateStore, canonical_url
 from topic_digest.collector import collect_with_diagnostics
 from topic_digest.config import DigestConfig
+from topic_digest.hermes import digest_prompt
 from topic_digest.render import render_markdown_digest
 from topic_digest.rss import parse_rss_items
 from topic_digest.score import score_candidate
@@ -165,6 +166,20 @@ sections: []
         self.assertGreaterEqual(len(cfg.queries), 5)
         self.assertIn("breakthrough", cfg.ranking.include_keywords)
         self.assertTrue(any(section.id == "space" for section in cfg.sections))
+
+    def test_hermes_digest_prompt_requires_direct_article_links(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "topic.yaml"
+            path.write_text("""
+topic: {id: test, title: Test, language: ru, lookback_hours: 24, max_items: 3}
+sources: {feeds: [], queries: []}
+ranking: {include_keywords: [], exclude_keywords: []}
+sections: []
+""".strip(), encoding="utf-8")
+            cfg = DigestConfig.from_file(path)
+        prompt = digest_prompt(cfg, "/tmp/candidates.jsonl")
+        self.assertIn("прямая ссылка на статью", prompt)
+        self.assertIn("Ссылка: [название статьи — источник](url)", prompt)
 
     def test_validate_config_reports_bad_feed_url_and_missing_fields(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
