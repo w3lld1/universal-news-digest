@@ -1,0 +1,140 @@
+topic:
+  id: ai
+  title: AI-дайджест
+  language: ru
+  lookback_hours: 24
+  max_items: 10
+
+sources:
+  feeds:
+    - name: OpenAI Blog
+      group: official
+      url: https://openai.com/news/rss.xml
+      tags: [model, product, api]
+    - name: Google DeepMind Blog
+      group: official
+      url: https://deepmind.google/discover/blog/rss.xml
+      tags: [model, research]
+    - name: Hugging Face Blog
+      group: official
+      url: https://huggingface.co/blog/feed.xml
+      tags: [opensource, model]
+    - name: Simon Willison
+      group: engineering
+      url: https://simonwillison.net/atom/everything/
+      tags: [engineering, tools]
+    - name: Latent Space
+      group: engineering
+      url: https://www.latent.space/feed
+      tags: [engineering, agents]
+    - name: The Decoder
+      group: news
+      url: https://the-decoder.com/feed/
+      tags: [news]
+    - name: Habr AI
+      group: ru
+      url: https://habr.com/ru/rss/hubs/artificial_intelligence/articles/?fl=ru
+      tags: [ru, engineering]
+
+  queries:
+    - name: OpenAI official
+      group: official
+      query: site:openai.com/news OR site:openai.com/blog model OR API OR agents
+      tags: [model, api, agents]
+    - name: Anthropic official
+      group: official
+      query: site:anthropic.com/news Claude OR model OR agents
+      tags: [model, agents]
+    - name: Qwen official
+      group: china
+      query: site:qwenlm.github.io OR site:alibabacloud.com Qwen model release
+      tags: [china, model, opensource]
+    - name: DeepSeek official
+      group: china
+      query: site:deepseek.com DeepSeek model release
+      tags: [china, model]
+    - name: GLM / Zhipu / Z.ai
+      group: china
+      query: site:z.ai OR site:bigmodel.cn GLM Zhipu model release
+      tags: [china, model]
+    - name: Kimi / Moonshot
+      group: china
+      query: site:kimi.moonshot.cn OR Moonshot Kimi AI model release
+      tags: [china, model]
+    - name: MiniMax
+      group: china
+      query: site:minimax.io AI model release MiniMax
+      tags: [china, model]
+    - name: Baidu ERNIE
+      group: china
+      query: Baidu ERNIE model release AI
+      tags: [china, model]
+    - name: Tencent Hunyuan
+      group: china
+      query: Tencent Hunyuan model release AI
+      tags: [china, model]
+    - name: ByteDance Seed / Doubao
+      group: china
+      query: ByteDance Seed Doubao model release AI
+      tags: [china, model]
+    - name: arXiv LLM agents reasoning
+      group: papers
+      query: arxiv cs.CL large language model agents reasoning evals
+      tags: [paper, agents, reasoning]
+    - name: Hugging Face Papers
+      group: papers
+      query: Hugging Face papers trending LLM multimodal agents
+      tags: [paper, model]
+    - name: GitHub AI tools
+      group: opensource
+      query: GitHub trending AI agent LLM vLLM llama.cpp Ollama LangGraph
+      tags: [opensource, tools]
+
+ranking:
+  include_keywords:
+    - model
+    - release
+    - benchmark
+    - eval
+    - agents
+    - reasoning
+    - multimodal
+    - open-source
+    - API
+    - Qwen
+    - DeepSeek
+    - GLM
+    - Kimi
+    - MiniMax
+  exclude_keywords:
+    - coupon
+    - webinar
+    - sponsored
+    - advertorial
+    - discount
+  source_weights:
+    official: 2
+    china: 2
+    papers: 1
+    engineering: 1
+    opensource: 1
+
+sections:
+  - id: main
+    title: Главное
+    tags: [model, product, api, agents]
+  - id: papers
+    title: Papers / исследования
+    groups: [papers]
+    tags: [paper, research]
+  - id: opensource
+    title: Open-source / инструменты
+    groups: [opensource]
+    tags: [opensource, tools]
+  - id: china
+    title: Китайский AI-блок
+    groups: [china]
+    tags: [china]
+  - id: ru
+    title: Русскоязычный контекст
+    groups: [ru]
