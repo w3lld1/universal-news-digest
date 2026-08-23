@@ -8,6 +8,7 @@ from pathlib import Path
 from topic_digest.candidates import Candidate, CandidateStore, canonical_url
 from topic_digest.collector import collect_with_diagnostics
 from topic_digest.config import DigestConfig
+from topic_digest.deployment import load_manifest, render_jobs
 from topic_digest.hermes import digest_prompt
 from topic_digest.render import render_markdown_digest
 from topic_digest.rss import parse_rss_items
@@ -224,6 +225,34 @@ sections: []
         self.assertEqual(result.candidates, [])
         self.assertEqual(result.failed_feeds, 1)
         self.assertIn("Bad scheme", result.errors[0].source)
+
+    def test_hermes_deployment_manifest_renders_six_portable_jobs(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        manifest = root / "deploy" / "hermes-jobs.yaml"
+        loaded = load_manifest(manifest)
+        self.assertEqual(len(loaded["jobs"]), 6)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            hermes_home = Path(tmp) / ".hermes"
+            jobs = render_jobs(
+                manifest,
+                repo_root="/srv/universal-news-digest",
+                hermes_home=hermes_home,
+            )
+
+        self.assertEqual({job["key"] for job in jobs}, {
+            "ai_collector", "ai_digest",
+            "geopolitics_collector", "geopolitics_digest",
+            "science_collector", "science_digest",
+        })
+        self.assertEqual(sum(job["deliver"] == "origin" for job in jobs), 3)
+        self.assertEqual(sum(job["schedule"] == "240m" for job in jobs), 3)
+        for job in jobs:
+            self.assertNotIn("/home/hermes1", job["prompt"])
+            self.assertIn("/srv/universal-news-digest", job["prompt"])
+            self.assertTrue(job["toolsets"])
+        for job in (job for job in jobs if job["key"].endswith("_digest")):
+            self.assertIn("Ссылка: [название статьи — источник](url)", job["prompt"])
 
 
 if __name__ == "__main__":

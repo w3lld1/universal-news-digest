@@ -106,6 +106,25 @@ The prompt generator keeps the topic definition in one place:
 topic-digest --config examples/ai.yaml --candidates /home/hermes/.hermes/ai-news-digest/candidates.jsonl hermes-prompts
 ```
 
+### Portable Hermes deployment
+
+The production collector/digest schedules and agent settings are captured in
+`deploy/hermes-jobs.yaml`. Render a path-adjusted handoff for a new Hermes
+instance without copying credentials, chat IDs, candidate history, or runtime
+state:
+
+```bash
+PYTHONPATH=src python3 -m topic_digest.deployment \
+  --repo-root /srv/universal-news-digest \
+  --hermes-home /srv/hermes/.hermes \
+  > /tmp/hermes-news-jobs.json
+```
+
+The output contains six portable job definitions: a collector and morning
+digest for AI, geopolitics, and science discoveries. Review the delivery target
+and timezone on the destination instance before creating the jobs. Candidate
+JSONL data is deliberately not part of the repository.
+
 ## AI example coverage
 
 `examples/ai.yaml` includes:
