@@ -1,0 +1,79 @@
+version: 1
+
+defaults:
+  model: gpt-5.6-sol
+  provider: openai-codex
+
+jobs:
+  - key: ai_collector
+    topic_config: examples/ai.yaml
+    candidates: ai-news-digest/candidates.jsonl
+    kind: collector
+    name: AI news collector
+    schedule: 240m
+    deliver: local
+    toolsets: [web, file, terminal]
+    web_enrichment: true
+    focus: OpenAI, Anthropic, Qwen, DeepSeek, GLM, Kimi, MiniMax, arXiv, Hugging Face и AI-инструменты на GitHub
+    exclusions: маркетинг, мелкие wrappers, sponsored/funding-only публикации и дубли
+
+  - key: ai_digest
+    topic_config: examples/ai.yaml
+    candidates: ai-news-digest/candidates.jsonl
+    kind: digest
+    name: AI morning digest RU
+    schedule: "30 5 * * *"
+    deliver: origin
+    toolsets: [web, file]
+    guidance:
+      - Источники могут быть английскими, китайскими или русскими; переводи и пересказывай их на русском.
+
+  - key: geopolitics_collector
+    topic_config: examples/geopolitics.yaml
+    candidates: geopolitics-digest/candidates.jsonl
+    kind: collector
+    name: Geopolitics news collector
+    schedule: 240m
+    deliver: local
+    toolsets: [web, file, terminal]
+    web_enrichment: true
+    focus: Россия и Украина, НАТО и Европа, Китай и Тайвань, Ближний Восток, санкции и энергетика, BRICS и Глобальный Юг, Африка, Арктика и международные институты
+    exclusions: celebrity, спорт, lifestyle, погода и локальные новости без международного значения
+
+  - key: geopolitics_digest
+    topic_config: examples/geopolitics.yaml
+    candidates: geopolitics-digest/candidates.jsonl
+    kind: digest
+    name: Geopolitics morning digest RU
+    schedule: "45 5 * * *"
+    deliver: origin
+    toolsets: [web, file]
+    guidance:
+      - Соблюдай нейтральный тон и отделяй факты от анализа.
+      - Предпочитай первоисточники, агентства и серьёзную аналитику; не включай слухи без атрибуции.
+      - Объясняй значимость через безопасность, санкции, рынки и энергетику, альянсы, риск эскалации и дипломатию.
+      - Исключай celebrity, спорт, lifestyle, погоду и локальные новости без международного значения.
+
+  - key: science_collector
+    topic_config: examples/science-discoveries.yaml
+    candidates: science-discoveries-digest/candidates.jsonl
+    kind: collector
+    name: Science discoveries collector
+    schedule: 240m
+    deliver: local
+    toolsets: [web, file, terminal]
+    web_enrichment: false
+    focus: реальные исследования и открытия из настроенных источников
+    exclusions: выдуманные результаты поисковых запросов и институциональные анонсы без исследовательского результата
+
+  - key: science_digest
+    topic_config: examples/science-discoveries.yaml
+    candidates: science-discoveries-digest/candidates.jsonl
+    kind: digest
+    name: Science discoveries morning digest RU
+    schedule: "0 6 * * *"
+    deliver: origin
+    toolsets: [web, file, terminal]
+    guidance:
+      - Ставь реальные исследования и открытия выше институциональных анонсов и чистого PR.
+      - Отмечай неопределённость, если summary источника недостаточно надёжен.
